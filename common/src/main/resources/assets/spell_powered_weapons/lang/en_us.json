@@ -1,0 +1,15 @@
+{
+  "tooltip.spell_powered_weapons.school_damage": "%s Damage",
+  "tooltip.spell_powered_weapons.unresolved": "Unknown School (%s)",
+  "tooltip.spell_powered_weapons.mode.split": "[SPLIT]",
+  "tooltip.spell_powered_weapons.mode.additive": "[ADDITIVE]",
+  "tooltip.spell_powered_weapons.item_damage": "Item Damage",
+  "tooltip.spell_powered_weapons.proportional": "Deal %s of %s as %s",
+  "config.spell_powered_weapons.title": "Spell Powered Weapons",
+  "config.spell_powered_weapons.spread_damage_numbers": "Spread damage numbers on mobs",
+  "config.spell_powered_weapons.mode_tags": "Mode tags",
+  "config.spell_powered_weapons.damage_breakdown": "Damage breakdown",
+  "config.spell_powered_weapons.blacklist": "Projectile Blacklist",
+  "config.spell_powered_weapons.split_schools": "Split + Additive Schools",
+  "config.spell_powered_weapons.additive_schools": "Additive-Only Schools"
+}

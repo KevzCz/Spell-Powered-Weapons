@@ -1,0 +1,23 @@
+{
+    "mode": "full_elemental",
+    "weight": 2,
+    "verifiers": [
+        {
+            "tag": "spw:conversion_targets"
+        }
+    ],
+    "rarity": "epic",
+    "entries": [
+        {
+            "school": "spell_power:arcane",
+            "coefficient": {
+                "min": 0.50,
+                "max": 0.80
+            },
+            "base": {
+                "min": 1.0,
+                "max": 3.0
+            }
+        }
+    ]
+}

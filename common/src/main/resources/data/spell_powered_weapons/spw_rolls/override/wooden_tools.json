@@ -1,0 +1,12 @@
+{
+    "type": "override",
+    "verifiers": [
+        {
+            "id": "minecraft:wooden_sword"
+        }
+    ],
+    "exclude": [
+        "mode:full_elemental",
+        "spw:split/sword_dual_school"
+    ]
+}

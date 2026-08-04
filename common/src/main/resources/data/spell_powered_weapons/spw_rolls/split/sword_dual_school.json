@@ -1,0 +1,34 @@
+{
+    "mode": "split",
+    "weight": 4,
+    "verifiers": [
+        {
+            "tag": "spw:conversion_targets"
+        }
+    ],
+    "rarity": "rare",
+    "entries": [
+        {
+            "school": "spell_power:fire",
+            "ratio": {
+                "min": 0.18,
+                "max": 0.28
+            },
+            "coefficient": {
+                "min": 0.25,
+                "max": 0.40
+            }
+        },
+        {
+            "school": "spell_power:frost",
+            "ratio": {
+                "min": 0.12,
+                "max": 0.22
+            },
+            "coefficient": {
+                "min": 0.20,
+                "max": 0.35
+            }
+        }
+    ]
+}

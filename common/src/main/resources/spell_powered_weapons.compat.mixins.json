@@ -1,0 +1,14 @@
+{
+  "required": false,
+  "package": "net.pixeldreamstudios.spw.mixin.compat",
+  "compatibilityLevel": "JAVA_21",
+  "minVersion": "0.8",
+  "client": [
+    "DamageNumberPositionMixin"
+  ],
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 0
+  }
+}

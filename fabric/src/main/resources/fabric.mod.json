@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "spell_powered_weapons",
+  "version": "${version}",
+  "name": "Spell Powered Weapons",
+  "description": "Weapons that convert part of their damage into spell school damage, scaling with your spell power.",
+  "authors": [
+    "KevzCz"
+  ],
+  "license": "MIT",
+  "icon": "assets/spell_powered_weapons/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.pixeldreamstudios.spw.fabric.SpwFabric"
+    ],
+    "client": [
+      "net.pixeldreamstudios.spw.fabric.client.SpwFabricClient"
+    ],
+    "modmenu": [
+      "net.pixeldreamstudios.spw.fabric.compat.ModMenuCompat"
+    ]
+  },
+  "mixins": [
+    "spell_powered_weapons.mixins.json",
+    "spell_powered_weapons.compat.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "architectury": ">=13.0.8",
+    "fabric-api": "*",
+    "spell_engine": ">=1.9.10",
+    "spell_power": "*",
+    "ranged_weapon_api": "*"
+  },
+  "suggests": {
+    "more_rpg_classes": "*"
+  }
+}

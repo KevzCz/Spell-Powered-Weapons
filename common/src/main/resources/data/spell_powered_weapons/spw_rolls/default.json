@@ -1,0 +1,8 @@
+{
+    "weight": 89,
+    "verifiers": [
+        {
+            "tag": "spw:conversion_targets"
+        }
+    ]
+}

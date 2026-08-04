@@ -1,0 +1,28 @@
+architectury {
+    common rootProject.enabled_platforms.split(',')
+}
+
+dependencies {
+    
+    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+
+    // Architectury API. This is optional, and you can comment it out if you don't need it.
+    modImplementation "dev.architectury:architectury:$rootProject.architectury_api_version"
+
+    modImplementation "curse.maven:spell-engine-807653:$rootProject.spell_engine_fabric_file"
+    modImplementation "curse.maven:spell-power-771265:$rootProject.spell_power_fabric_file"
+
+    modCompileOnly "curse.maven:more-rpg-library-923030:$rootProject.more_rpg_library_fabric_file"
+
+    modImplementation "curse.maven:ranged-weapon-api-962162:$rootProject.ranged_weapon_api_fabric_file"
+
+    modCompileOnly "curse.maven:mmmmmmmmmmmm-225738:$rootProject.dummmmmmy_fabric_file"
+
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}

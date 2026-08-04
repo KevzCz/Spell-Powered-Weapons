@@ -1,0 +1,17 @@
+{
+    "mode": "split",
+    "verifiers": [
+        {
+            "id": "minecraft:golden_sword"
+        }
+    ],
+    "rarity": "rare",
+    "entries": [
+        {
+            "school": "spell_power:fire",
+            "ratio": 0.40,
+            "coefficient": 0.5,
+            "base": 0.0
+        }
+    ]
+}
