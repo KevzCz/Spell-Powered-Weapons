@@ -111,8 +111,12 @@ public final class PhysicalReduction {
         }
 
         float applied = appliedFraction(stack);
-        if (applied >= 1f || applied <= 0f) {
+        if (applied >= 1f) {
             return current;
+        }
+        if (applied <= 0f) {
+            return stack.getPrototype().getOrDefault(
+                    DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY);
         }
 
         Holder<Attribute> ranged = rangedDamageAttribute();
