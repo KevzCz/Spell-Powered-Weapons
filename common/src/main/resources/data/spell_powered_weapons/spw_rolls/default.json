@@ -2,7 +2,7 @@
     "weight": 89,
     "verifiers": [
         {
-            "tag": "spw:conversion_targets"
+            "tag": "spell_powered_weapons:conversion_targets"
         }
     ]
 }

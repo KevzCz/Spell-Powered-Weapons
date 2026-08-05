@@ -81,9 +81,6 @@ An item matches if any verifier matches and no exclude does. This mod ships
 `#spell_powered_weapons:conversion_targets`, covering swords, axes, tridents, bows, crossbows, maces,
 and the vanilla `enchantable/*` tags.
 
-> The bundled example rolls use `"tag": "spw:conversion_targets"`, but the tag ships under
-> `spell_powered_weapons:`. Use the full namespace in your own files. (`spw:` *is* correct for roll
-> ids in overrides — a different thing.)
 
 ## Override fields
 
