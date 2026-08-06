@@ -1,1 +1,1 @@
-Fix wrong tags
+Added uk_ua translation @Ch1sho
