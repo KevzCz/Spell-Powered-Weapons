@@ -1,0 +1,15 @@
+{
+  "tooltip.spell_powered_weapons.school_damage": "%s шкоди",
+  "tooltip.spell_powered_weapons.unresolved": "Невідома школа (%s)",
+  "tooltip.spell_powered_weapons.mode.split": "[СПЛІТ]",
+  "tooltip.spell_powered_weapons.mode.additive": "[АДИТИВНО]",
+  "tooltip.spell_powered_weapons.item_damage": "Шкода від предмета",
+  "tooltip.spell_powered_weapons.proportional": "Завдає %s від %s як %s",
+  "config.spell_powered_weapons.title": "Spell Powered Weapons",
+  "config.spell_powered_weapons.spread_damage_numbers": "Розсіювати значення шкоди на мобах",
+  "config.spell_powered_weapons.mode_tags": "Теги режимів",
+  "config.spell_powered_weapons.damage_breakdown": "Деталізація шкоди",
+  "config.spell_powered_weapons.blacklist": "Чорний список снарядів",
+  "config.spell_powered_weapons.split_schools": "Спліт + Адитивні школи",
+  "config.spell_powered_weapons.additive_schools": "Тільки адитивні школи"
+}
