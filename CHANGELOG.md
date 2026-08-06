@@ -1,1 +1,1 @@
-Added uk_ua translation @Ch1sho
+Fix loot table being empty when crafttweaker is available
