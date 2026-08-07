@@ -1,1 +1,1 @@
-Fix loot table being empty when crafttweaker is available
+No changes other than dependency changes (less restricting)

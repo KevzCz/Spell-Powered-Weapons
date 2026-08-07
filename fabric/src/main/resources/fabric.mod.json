@@ -31,7 +31,7 @@
     "java": ">=21",
     "architectury": ">=13.0.8",
     "fabric-api": "*",
-    "spell_engine": ">=1.9.10",
+    "spell_engine": "*",
     "spell_power": "*",
     "ranged_weapon_api": "*"
   },

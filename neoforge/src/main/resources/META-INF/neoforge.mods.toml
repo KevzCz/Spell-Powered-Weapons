@@ -37,14 +37,12 @@ side = "BOTH"
 [[dependencies.spell_powered_weapons]]
 modId = "spell_engine"
 type = "required"
-versionRange = "[1.9.10,)"
 ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.spell_powered_weapons]]
 modId = "spell_power"
 type = "required"
-versionRange = "[1.4,)"
 ordering = "AFTER"
 side = "BOTH"
 
