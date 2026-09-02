@@ -1,5 +1,3 @@
-Added 10 rolls for each mode
+Added null checks
 
-Fixed crafting not being able to get rolls
-
-Removed unused rarity definition
+Added missing component registering on neoforge so the issue where it crashes should be fixed now

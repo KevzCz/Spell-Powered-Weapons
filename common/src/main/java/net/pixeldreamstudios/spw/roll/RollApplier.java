@@ -2,9 +2,10 @@ package net.pixeldreamstudios.spw.roll;
 
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.pixeldreamstudios.spw.damage.PhysicalReduction;
+import net.pixeldreamstudios.spw.component.Conversions;
 import net.pixeldreamstudios.spw.component.DamageConversion;
 import net.pixeldreamstudios.spw.component.SpwComponents;
+import net.pixeldreamstudios.spw.damage.PhysicalReduction;
 
 public final class RollApplier {
     private RollApplier() {}
@@ -25,17 +26,23 @@ public final class RollApplier {
             return false;
         }
 
-        stack.set(SpwComponents.DAMAGE_CONVERSION, rolled);
+        if (!Conversions.set(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID, rolled)) {
+            return false;
+        }
         PhysicalReduction.apply(stack, rolled.physicalFraction());
 
         if (config.mode().suppressesPhysical()) {
-            stack.set(SpwComponents.SUPPRESS_PHYSICAL, Boolean.TRUE);
-            stack.set(SpwComponents.HIDE_DAMAGE_LINE, Boolean.TRUE);
+            Conversions.set(stack, SpwComponents.SUPPRESS_PHYSICAL,
+                    SpwComponents.SUPPRESS_PHYSICAL_ID, Boolean.TRUE);
+            Conversions.set(stack, SpwComponents.HIDE_DAMAGE_LINE,
+                    SpwComponents.HIDE_DAMAGE_LINE_ID, Boolean.TRUE);
         }
         return true;
     }
 
     public static boolean hasRolled(ItemStack stack) {
-        return stack.has(SpwComponents.DAMAGE_CONVERSION);
+        return Conversions.get(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID) != null;
     }
 }

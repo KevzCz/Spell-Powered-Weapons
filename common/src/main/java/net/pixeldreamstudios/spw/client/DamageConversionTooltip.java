@@ -50,7 +50,8 @@ public final class DamageConversionTooltip {
         if (stack.isEmpty()) {
             return;
         }
-        DamageConversion conversion = stack.get(SpwComponents.DAMAGE_CONVERSION);
+        DamageConversion conversion = Conversions.get(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID);
         if (conversion == null || conversion.isEmpty()) {
             return;
         }

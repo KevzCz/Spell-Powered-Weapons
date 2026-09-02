@@ -134,15 +134,19 @@ public final class SpwCommands {
                                                 IntegerArgumentType.getInteger(ctx, "samples"))))))
                 .then(Commands.literal("hide")
                         .then(Commands.literal("on").executes(ctx -> flag(ctx,
-                                SpwComponents.HIDE_DAMAGE_LINE, true, "Damage line hidden.")))
+                                SpwComponents.HIDE_DAMAGE_LINE,
+                                SpwComponents.HIDE_DAMAGE_LINE_ID, true, "Damage line hidden.")))
                         .then(Commands.literal("off").executes(ctx -> flag(ctx,
-                                SpwComponents.HIDE_DAMAGE_LINE, false, "Damage line shown."))))
+                                SpwComponents.HIDE_DAMAGE_LINE,
+                                SpwComponents.HIDE_DAMAGE_LINE_ID, false, "Damage line shown."))))
                 .then(Commands.literal("suppress")
                         .then(Commands.literal("on").executes(ctx -> flag(ctx,
-                                SpwComponents.SUPPRESS_PHYSICAL, true,
+                                SpwComponents.SUPPRESS_PHYSICAL,
+                                SpwComponents.SUPPRESS_PHYSICAL_ID, true,
                                 "Physical damage suppressed — this weapon now deals only elemental damage.")))
                         .then(Commands.literal("off").executes(ctx -> flag(ctx,
-                                SpwComponents.SUPPRESS_PHYSICAL, false,
+                                SpwComponents.SUPPRESS_PHYSICAL,
+                                SpwComponents.SUPPRESS_PHYSICAL_ID, false,
                                 "Physical damage restored."))))
                 .then(Commands.literal("debug")
                         .then(Commands.literal("on").executes(ctx -> debug(ctx, true)))
@@ -164,7 +168,7 @@ public final class SpwCommands {
     }
 
     private static int flag(CommandContext<CommandSourceStack> context,
-                            DataComponentType<Boolean> type,
+                            DataComponentType<Boolean> type, String id,
                             boolean on, String message) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         ItemStack stack = player.getMainHandItem();
@@ -172,10 +176,11 @@ public final class SpwCommands {
             return fail(context, "Hold the weapon you want to modify.");
         }
 
-        if (on) {
-            stack.set(type, Boolean.TRUE);
-        } else {
-            stack.remove(type);
+        boolean applied = on
+                ? Conversions.set(stack, type, id, Boolean.TRUE)
+                : Conversions.remove(stack, type, id);
+        if (!applied) {
+            return fail(context, "That component is not available on this version — see the log.");
         }
         context.getSource().sendSuccess(() -> Component.literal(message)
                 .withStyle(ChatFormatting.GREEN), false);
@@ -203,7 +208,8 @@ public final class SpwCommands {
                 nameArg(context, "output_name"),
                 nameArg(context, "source_name"),
                 Optional.empty()));
-        stack.set(SpwComponents.DAMAGE_CONVERSION, updated);
+        Conversions.set(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID, updated);
         applyReduction(context, stack, updated.physicalFraction());
 
         String from = sourceType == null ? "damage dealt" : sourceType;
@@ -271,12 +277,15 @@ public final class SpwCommands {
                 SpwComponents.DAMAGE_CONVERSION, DamageConversion.EMPTY);
         DamageConversion updated = current.with(
                 new DamageConversion.Entry(mode, schoolId, ratio, base, coefficient));
-        stack.set(SpwComponents.DAMAGE_CONVERSION, updated);
+        Conversions.set(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID, updated);
         applyReduction(context, stack, updated.physicalFraction());
 
         if (updated.physicalFraction() <= 0f) {
-            stack.set(SpwComponents.SUPPRESS_PHYSICAL, Boolean.TRUE);
-            stack.set(SpwComponents.HIDE_DAMAGE_LINE, Boolean.TRUE);
+            Conversions.set(stack, SpwComponents.SUPPRESS_PHYSICAL,
+                    SpwComponents.SUPPRESS_PHYSICAL_ID, Boolean.TRUE);
+            Conversions.set(stack, SpwComponents.HIDE_DAMAGE_LINE,
+                    SpwComponents.HIDE_DAMAGE_LINE_ID, Boolean.TRUE);
         }
 
         float reportedBase = base;
@@ -311,7 +320,8 @@ public final class SpwCommands {
     private static int info(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         ItemStack stack = player.getMainHandItem();
-        DamageConversion conversion = stack.get(SpwComponents.DAMAGE_CONVERSION);
+        DamageConversion conversion = Conversions.get(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID);
 
         if (conversion == null || conversion.isEmpty()) {
             context.getSource().sendSuccess(
@@ -325,7 +335,8 @@ public final class SpwCommands {
                         ? "suppressed"
                         : percent(conversion.physicalFraction())))
                 .withStyle(ChatFormatting.WHITE), false);
-        if (Boolean.TRUE.equals(stack.get(SpwComponents.HIDE_DAMAGE_LINE)) && !suppressed) {
+        if (Boolean.TRUE.equals(Conversions.get(stack, SpwComponents.HIDE_DAMAGE_LINE,
+                SpwComponents.HIDE_DAMAGE_LINE_ID)) && !suppressed) {
             context.getSource().sendSuccess(() -> Component.literal("Damage line: hidden")
                     .withStyle(ChatFormatting.WHITE), false);
         }
@@ -358,7 +369,8 @@ public final class SpwCommands {
     private static int remove(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         ItemStack stack = player.getMainHandItem();
-        DamageConversion conversion = stack.get(SpwComponents.DAMAGE_CONVERSION);
+        DamageConversion conversion = Conversions.get(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID);
         if (conversion == null || conversion.isEmpty()) {
             return fail(context, "No damage conversion on this item.");
         }
@@ -370,9 +382,11 @@ public final class SpwCommands {
         }
 
         if (updated.isEmpty()) {
-            stack.remove(SpwComponents.DAMAGE_CONVERSION);
+            Conversions.remove(stack, SpwComponents.DAMAGE_CONVERSION,
+                    SpwComponents.DAMAGE_CONVERSION_ID);
         } else {
-            stack.set(SpwComponents.DAMAGE_CONVERSION, updated);
+            Conversions.set(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID, updated);
         }
         applyReduction(context, stack, updated.physicalFraction());
         context.getSource().sendSuccess(() -> Component.literal("Removed " + schoolId + ".")
@@ -429,14 +443,20 @@ public final class SpwCommands {
     private static int clear(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         ServerPlayer player = context.getSource().getPlayerOrException();
         ItemStack stack = player.getMainHandItem();
-        if (stack.get(SpwComponents.DAMAGE_CONVERSION) == null
-                && stack.get(SpwComponents.HIDE_DAMAGE_LINE) == null
-                && stack.get(SpwComponents.SUPPRESS_PHYSICAL) == null) {
+        if (Conversions.get(stack, SpwComponents.DAMAGE_CONVERSION,
+                        SpwComponents.DAMAGE_CONVERSION_ID) == null
+                && Conversions.get(stack, SpwComponents.HIDE_DAMAGE_LINE,
+                        SpwComponents.HIDE_DAMAGE_LINE_ID) == null
+                && Conversions.get(stack, SpwComponents.SUPPRESS_PHYSICAL,
+                        SpwComponents.SUPPRESS_PHYSICAL_ID) == null) {
             return fail(context, "No damage conversion on this item.");
         }
-        stack.remove(SpwComponents.DAMAGE_CONVERSION);
-        stack.remove(SpwComponents.HIDE_DAMAGE_LINE);
-        stack.remove(SpwComponents.SUPPRESS_PHYSICAL);
+        Conversions.remove(stack, SpwComponents.DAMAGE_CONVERSION,
+                SpwComponents.DAMAGE_CONVERSION_ID);
+        Conversions.remove(stack, SpwComponents.HIDE_DAMAGE_LINE,
+                SpwComponents.HIDE_DAMAGE_LINE_ID);
+        Conversions.remove(stack, SpwComponents.SUPPRESS_PHYSICAL,
+                SpwComponents.SUPPRESS_PHYSICAL_ID);
         applyReduction(context, stack, 1f);
         context.getSource().sendSuccess(() -> Component.literal(
                 "Cleared damage conversion.").withStyle(ChatFormatting.GREEN), false);
