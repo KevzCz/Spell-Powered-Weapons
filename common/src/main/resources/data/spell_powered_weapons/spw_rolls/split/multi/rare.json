@@ -1,0 +1,41 @@
+{
+    "mode": "split",
+    "weight": 9,
+    "verifiers": [
+        {
+            "tag": "spell_powered_weapons:conversion_targets"
+        }
+    ],
+    "entries": [
+        {
+            "school": "any",
+            "ratio": {
+                "min": 0.12,
+                "max": 0.192
+            },
+            "coefficient": {
+                "min": 0.168,
+                "max": 0.252
+            },
+            "base": {
+                "min": 0,
+                "max": 0.6
+            }
+        },
+        {
+            "school": "any",
+            "ratio": {
+                "min": 0.096,
+                "max": 0.154
+            },
+            "coefficient": {
+                "min": 0.134,
+                "max": 0.202
+            },
+            "base": {
+                "min": 0,
+                "max": 0.48
+            }
+        }
+    ]
+}

@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.util.Optional;
 
 public record RollEntry(
-        Optional<String> school,
+        Optional<SchoolPool> schools,
         Ranged ratio,
         Ranged coefficient,
         Ranged base,
@@ -21,7 +21,7 @@ public record RollEntry(
         Optional<ResourceLocation> outputIcon
 ) {
     public static final Codec<RollEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.optionalFieldOf("school").forGetter(RollEntry::school),
+            SchoolPool.CODEC.optionalFieldOf("school").forGetter(RollEntry::schools),
             Ranged.CODEC.optionalFieldOf("ratio", Ranged.ZERO).forGetter(RollEntry::ratio),
             Ranged.CODEC.optionalFieldOf("coefficient", Ranged.ZERO).forGetter(RollEntry::coefficient),
             Ranged.CODEC.optionalFieldOf("base", Ranged.ZERO).forGetter(RollEntry::base),
@@ -38,12 +38,21 @@ public record RollEntry(
 
     public static RollEntry ofSchool(String school, Ranged ratio, Ranged coefficient,
                                      Ranged base, Ranged share) {
-        return new RollEntry(Optional.of(school), ratio, coefficient, base, share,
+        return ofPool(SchoolPool.of(school), ratio, coefficient, base, share);
+    }
+
+    public static RollEntry ofPool(SchoolPool pool, Ranged ratio, Ranged coefficient,
+                                   Ranged base, Ranged share) {
+        return new RollEntry(Optional.of(pool), ratio, coefficient, base, share,
                 Optional.empty(), Optional.empty(),
                 Optional.empty(), Optional.empty(), Optional.empty());
     }
 
+    public Optional<String> school() {
+        return schools.flatMap(SchoolPool::single);
+    }
+
     public String schoolOrEmpty() {
-        return school.orElse("");
+        return school().orElse("");
     }
 }

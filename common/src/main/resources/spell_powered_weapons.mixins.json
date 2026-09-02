@@ -3,17 +3,18 @@
   "package": "net.pixeldreamstudios.spw.mixin",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
-  "client": [
-  ],
+  "client": [],
   "mixins": [
     "ArrowAttackMixin",
     "ArrowChargeMixin",
-    "LootTableMixin",
     "LivingEntityAccessor",
+    "LootTableMixin",
     "MobAttackMixin",
     "PlayerAttackMixin",
     "ProjectileMixin",
     "ProportionalHurtMixin",
+    "QuickCraftMixin",
+    "ResultSlotAccessor",
     "ResultSlotMixin",
     "SpellImpactMixin",
     "ThrownTridentMixin"

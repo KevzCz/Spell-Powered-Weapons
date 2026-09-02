@@ -5,8 +5,11 @@ import net.pixeldreamstudios.spw.component.DamageConversion;
 import net.pixeldreamstudios.spw.damage.SchoolResolver;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public final class ConversionRoller {
     private ConversionRoller() {}
@@ -17,23 +20,45 @@ public final class ConversionRoller {
 
     public static DamageConversion roll(RollConfig config, RandomSource random,
                                         Predicate<String> schoolIsValid) {
+        return roll(config, random, schoolIsValid, SchoolResolver::rollableIds);
+    }
+
+    public static DamageConversion roll(RollConfig config, RandomSource random,
+                                        Predicate<String> schoolIsValid,
+                                        Supplier<List<String>> anySource) {
         if (config == null || !config.mode().producesConversion() || config.entries().isEmpty()) {
             return DamageConversion.EMPTY;
         }
 
         RollMode mode = config.mode();
         List<DamageConversion.Entry> built = new ArrayList<>(config.entries().size());
+        Set<String> used = new HashSet<>();
+
         for (RollEntry entry : config.entries()) {
-            if (entry.school().isPresent() && !schoolIsValid.test(entry.school().get())) {
+            String school = resolveSchool(entry, random, schoolIsValid, used, anySource);
+            if (entry.schools().isPresent() && school == null) {
                 continue;
             }
-            built.add(buildEntry(mode, entry, random));
+            if (school != null) {
+                used.add(school);
+            }
+            built.add(buildEntry(mode, entry, school, random));
         }
 
         return built.isEmpty() ? DamageConversion.EMPTY : new DamageConversion(List.copyOf(built));
     }
 
-    private static DamageConversion.Entry buildEntry(RollMode mode, RollEntry entry, RandomSource random) {
+    private static String resolveSchool(RollEntry entry, RandomSource random,
+                                        Predicate<String> schoolIsValid, Set<String> used,
+                                        Supplier<List<String>> anySource) {
+        if (entry.schools().isEmpty()) {
+            return null;
+        }
+        return entry.schools().get().pick(random, schoolIsValid, used, anySource);
+    }
+
+    private static DamageConversion.Entry buildEntry(RollMode mode, RollEntry entry, String school,
+                                                     RandomSource random) {
         float ratio;
         float coefficient = Math.max(0f, entry.coefficient().sample(random));
         float base = Math.max(0f, entry.base().sample(random));
@@ -52,7 +77,7 @@ public final class ConversionRoller {
             default -> ratio = 0f;
         }
 
-        return new DamageConversion.Entry(mode.componentMode(), entry.schoolOrEmpty(),
+        return new DamageConversion.Entry(mode.componentMode(), school == null ? "" : school,
                 ratio, base, coefficient);
     }
 

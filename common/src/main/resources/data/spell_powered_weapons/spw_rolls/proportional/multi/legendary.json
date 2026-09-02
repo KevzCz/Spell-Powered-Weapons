@@ -1,0 +1,53 @@
+{
+    "mode": "proportional",
+    "weight": 1,
+    "verifiers": [
+        {
+            "tag": "spell_powered_weapons:conversion_targets"
+        }
+    ],
+    "entries": [
+        {
+            "share": {
+                "min": 0.083,
+                "max": 0.138
+            },
+            "source_type": "minecraft:player_attack",
+            "output_type": "spell_power:lightning",
+            "source_name": {
+                "text": "attack damage"
+            },
+            "output_name": {
+                "translate": "attribute.name.spell_power.lightning"
+            }
+        },
+        {
+            "share": {
+                "min": 0.065,
+                "max": 0.108
+            },
+            "source_type": "minecraft:player_attack",
+            "output_type": "spell_power:soul",
+            "source_name": {
+                "text": "attack damage"
+            },
+            "output_name": {
+                "translate": "attribute.name.spell_power.soul"
+            }
+        },
+        {
+            "share": {
+                "min": 0.054,
+                "max": 0.09
+            },
+            "source_type": "minecraft:player_attack",
+            "output_type": "spell_power:fire",
+            "source_name": {
+                "text": "attack damage"
+            },
+            "output_name": {
+                "translate": "attribute.name.spell_power.fire"
+            }
+        }
+    ]
+}

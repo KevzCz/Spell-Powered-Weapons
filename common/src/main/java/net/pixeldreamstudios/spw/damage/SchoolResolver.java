@@ -47,4 +47,11 @@ public final class SchoolResolver {
                 .map(school -> school.id.toString())
                 .toList();
     }
+
+    public static List<String> rollableIds() {
+        String generic = SpellSchools.GENERIC.id.toString();
+        return convertibleIds().stream()
+                .filter(id -> !generic.equals(id))
+                .toList();
+    }
 }

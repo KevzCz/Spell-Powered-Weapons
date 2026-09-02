@@ -28,10 +28,6 @@ public final class SpwConfig {
         return common.spread_damage_numbers_on_mobs;
     }
 
-    public static boolean rollOnCraft() {
-        return common.roll_on_craft;
-    }
-
     public static boolean isBlacklistedProjectile(String entityId) {
         return common.projectile_blacklist.contains(entityId);
     }

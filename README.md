@@ -39,14 +39,13 @@ elemental = (weapon_damage × ratio) + base + (spell_power × coefficient)
 | `verifiers` | list | `[]` | Items this applies to |
 | `excludes` | list | `[]` | Items carved back out |
 | `entries` | list | `[]` | The conversions themselves |
-| `rarity` | string | `""` | Parsed and stored, but not currently used |
 | `type` | string | — | Only `"override"`, which marks the file as an override |
 
 ## Entry fields
 
 | Field | Type | Used by | Notes |
 | --- | --- | --- | --- |
-| `school` | string | split, additive, full_elemental | e.g. `spell_power:fire` |
+| `school` | string \| list | split, additive, full_elemental | One id, `"any"`, or a list to pick from — see below |
 | `ratio` | number/range | split | Share taken from the weapon |
 | `coefficient` | number/range | split, additive, full_elemental | Multiplied by Spell Power |
 | `base` | number/range | split, additive, full_elemental | Flat added amount |
@@ -82,6 +81,50 @@ An item matches if any verifier matches and no exclude does. This mod ships
 and the vanilla `enchantable/*` tags.
 
 
+## File layout
+
+```
+spw_rolls/
+  default.json                 no conversion; its weight sets the blank rate
+  <mode>/<rarity>.json         one entry  - always exactly one school
+  <mode>/multi/<rarity>.json   2+ entries - two or more distinct schools
+```
+
+A roll that declares more than one entry lives under `multi/`. Rarity names the file:
+`common`, `rare`, `epic`, `legendary`, `unique` - heaviest weight to lightest.
+
+`proportional/` is named per school instead, because that mode names its school through
+`output_type` rather than `school`, so it has no random form.
+
+Roll ids follow the path, so `split/multi/unique.json` is `spw:split/multi/unique`,
+and the glob `spw:split/multi/*` selects every multi-school split.
+
+---
+
+## Choosing a school
+
+The `school` field on an entry accepts three forms.
+
+| Form | Example | Behaviour |
+| --- | --- | --- |
+| One id | `"spell_power:fire"` | Always that school |
+| `"any"` | `"any"` | Picks from every rollable school at roll time, evenly |
+| List | `["spell_power:fire", "spell_power:frost"]` | Picks one from the list, evenly |
+| Weighted list | `[{"school": "spell_power:fire", "weight": 4}, …]` | Picks one, favouring higher weights |
+
+`"any"` reads the live school registry, so schools added by other mods are included
+automatically. `spell_power:generic` is always excluded — it scales only flat gear
+modifiers, never a converted portion.
+
+Within a single roll, each entry picks a school the earlier entries did not take, so a
+two-entry roll always produces two different schools. If the pool runs out (more entries
+than available schools) the exclusion is relaxed rather than dropping the entry.
+
+A school id that does not resolve — usually a mod that is not installed — is skipped at
+pick time. A list of six with one missing mod simply picks among the remaining five.
+
+---
+
 ## Override fields
 
 Filters which rolls an item may draw. Defines no conversions of its own.
@@ -94,7 +137,7 @@ Filters which rolls an item may draw. Defines no conversions of its own.
 | `exclude` | list | `[]` | Roll patterns to bar |
 | `replace` | bool | `false` | `true` starts from nothing; only `include` is drawable |
 
-Patterns accept `mode:full_elemental`, an exact roll id `spw:split/sword_minor`, or a prefix glob
+Patterns accept `mode:full_elemental`, an exact roll id `spw:split/common`, or a prefix glob
 `spw:split/*`. Roll ids come from the file's path under `spw_rolls/`, always in the `spw:` namespace.
 
 ---
@@ -107,7 +150,6 @@ Patterns accept `mode:full_elemental`, an exact roll id `spw:split/sword_minor`,
 {
     "mode": "split",
     "verifiers": [ "minecraft:golden_sword" ],
-    "rarity": "rare",
     "entries": [
         {
             "school": "spell_power:fire",
@@ -119,14 +161,13 @@ Patterns accept `mode:full_elemental`, an exact roll id `spw:split/sword_minor`,
 }
 ```
 
-### Rolled split — `spw_rolls/sword_minor.json`
+### Rolled split — `spw_rolls/split/common.json`
 
 ```jsonc
 {
     "mode": "split",
     "weight": 40,
     "verifiers": [ "#spell_powered_weapons:conversion_targets" ],
-    "excludes": [ "minecraft:netherite_sword" ],
     "entries": [
         {
             "school": "spell_power:fire",
@@ -138,9 +179,10 @@ Patterns accept `mode:full_elemental`, an exact roll id `spw:split/sword_minor`,
 }
 ```
 
-### Two schools — `spw_rolls/sword_dual.json`
+### Two schools — `spw_rolls/split/epic.json`
 
-Composition is authored, never rolled: two entries always yield two schools.
+Two entries always yield two schools. Each entry picks its own school, and a school
+already taken by an earlier entry will not be picked again, so the pair is always distinct.
 
 ```jsonc
 {
@@ -204,12 +246,14 @@ The "nothing happens" outcome. A high weight here is how you tune overall rarity
 
 ```jsonc
 {
-    "weight": 89,
+    "weight": 75,
     "verifiers": [ "#spell_powered_weapons:conversion_targets" ]
 }
 ```
 
-### Override — `spw_rolls/override/wooden_tools.json`
+### Override — `spw_rolls/override/<name>.json`
+
+No override ships by default; add one to filter what an item may draw.
 
 ```jsonc
 {
@@ -217,7 +261,7 @@ The "nothing happens" outcome. A high weight here is how you tune overall rarity
     "verifiers": [ "minecraft:wooden_sword" ],
     "exclude": [
         "mode:full_elemental",
-        "spw:split/sword_dual_school"
+        "spw:split/multi/unique"
     ]
 }
 ```

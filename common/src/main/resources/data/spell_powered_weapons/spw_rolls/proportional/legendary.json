@@ -1,0 +1,25 @@
+{
+    "mode": "proportional",
+    "weight": 2,
+    "verifiers": [
+        {
+            "tag": "spell_powered_weapons:conversion_targets"
+        }
+    ],
+    "entries": [
+        {
+            "share": {
+                "min": 0.18,
+                "max": 0.3
+            },
+            "source_type": "minecraft:player_attack",
+            "output_type": "spell_power:lightning",
+            "source_name": {
+                "text": "attack damage"
+            },
+            "output_name": {
+                "translate": "attribute.name.spell_power.lightning"
+            }
+        }
+    ]
+}

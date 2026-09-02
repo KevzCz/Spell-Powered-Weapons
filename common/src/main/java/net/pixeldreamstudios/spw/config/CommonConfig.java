@@ -6,8 +6,6 @@ import java.util.List;
 public final class CommonConfig {
     public boolean spread_damage_numbers_on_mobs = true;
 
-    public boolean roll_on_craft = false;
-
     public List<String> projectile_blacklist = new ArrayList<>();
 
     public List<String> split_and_additive_schools = new ArrayList<>(List.of(
@@ -21,6 +19,9 @@ public final class CommonConfig {
             "spell_power:arcane",
             "spell_power:healing",
             "spell_power:lightning",
-            "spell_power:soul"
+            "spell_power:soul",
+            "spell_power:air",
+            "spell_power:earth",
+            "spell_power:water"
     ));
 }

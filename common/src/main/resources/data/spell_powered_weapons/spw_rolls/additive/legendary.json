@@ -1,0 +1,22 @@
+{
+    "mode": "additive",
+    "weight": 5,
+    "verifiers": [
+        {
+            "tag": "spell_powered_weapons:conversion_targets"
+        }
+    ],
+    "entries": [
+        {
+            "school": "any",
+            "coefficient": {
+                "min": 0.36,
+                "max": 0.58
+            },
+            "base": {
+                "min": 1.5,
+                "max": 3.5
+            }
+        }
+    ]
+}

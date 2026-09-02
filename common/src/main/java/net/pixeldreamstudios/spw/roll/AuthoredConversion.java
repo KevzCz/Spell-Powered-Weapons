@@ -11,15 +11,13 @@ public record AuthoredConversion(
         RollMode mode,
         List<ItemVerifier> verifiers,
         List<ItemVerifier> excludes,
-        List<RollEntry> entries,
-        String rarity
+        List<RollEntry> entries
 ) {
     public static final Codec<AuthoredConversion> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             RollMode.CODEC.optionalFieldOf("mode", RollMode.SPLIT).forGetter(AuthoredConversion::mode),
             ItemVerifier.CODEC.listOf().optionalFieldOf("verifiers", List.of()).forGetter(AuthoredConversion::verifiers),
             ItemVerifier.CODEC.listOf().optionalFieldOf("excludes", List.of()).forGetter(AuthoredConversion::excludes),
-            RollEntry.CODEC.listOf().optionalFieldOf("entries", List.of()).forGetter(AuthoredConversion::entries),
-            Codec.STRING.optionalFieldOf("rarity", "").forGetter(AuthoredConversion::rarity)
+            RollEntry.CODEC.listOf().optionalFieldOf("entries", List.of()).forGetter(AuthoredConversion::entries)
     ).apply(instance, AuthoredConversion::new));
 
     public boolean matches(ItemStack stack) {
@@ -33,6 +31,6 @@ public record AuthoredConversion(
     public RollConfig asRoll() {
         return new RollConfig(
                 ResourceLocation.fromNamespaceAndPath(RollTables.ROLL_ID_NAMESPACE, AUTHORED_PATH),
-                mode, UNUSED_WEIGHT, verifiers, excludes, entries, rarity);
+                mode, UNUSED_WEIGHT, verifiers, excludes, entries);
     }
 }

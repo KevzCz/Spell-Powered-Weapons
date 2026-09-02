@@ -1,0 +1,33 @@
+{
+    "mode": "full_elemental",
+    "weight": 2,
+    "verifiers": [
+        {
+            "tag": "spell_powered_weapons:conversion_targets"
+        }
+    ],
+    "entries": [
+        {
+            "school": "any",
+            "coefficient": {
+                "min": 0.24,
+                "max": 0.36
+            },
+            "base": {
+                "min": 0.6,
+                "max": 1.2
+            }
+        },
+        {
+            "school": "any",
+            "coefficient": {
+                "min": 0.192,
+                "max": 0.288
+            },
+            "base": {
+                "min": 0.48,
+                "max": 0.96
+            }
+        }
+    ]
+}

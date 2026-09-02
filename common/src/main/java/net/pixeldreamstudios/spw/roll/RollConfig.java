@@ -13,8 +13,7 @@ public record RollConfig(
         int weight,
         List<ItemVerifier> verifiers,
         List<ItemVerifier> excludes,
-        List<RollEntry> entries,
-        String rarity
+        List<RollEntry> entries
 ) {
     public static final int DEFAULT_WEIGHT = 10;
 
@@ -23,14 +22,13 @@ public record RollConfig(
             Codec.INT.optionalFieldOf("weight", DEFAULT_WEIGHT).forGetter(Parsed::weight),
             ItemVerifier.CODEC.listOf().optionalFieldOf("verifiers", List.of()).forGetter(Parsed::verifiers),
             ItemVerifier.CODEC.listOf().optionalFieldOf("excludes", List.of()).forGetter(Parsed::excludes),
-            RollEntry.CODEC.listOf().optionalFieldOf("entries", List.of()).forGetter(Parsed::entries),
-            Codec.STRING.optionalFieldOf("rarity", "").forGetter(Parsed::rarity)
+            RollEntry.CODEC.listOf().optionalFieldOf("entries", List.of()).forGetter(Parsed::entries)
     ).apply(instance, Parsed::new));
 
     public record Parsed(RollMode mode, int weight, List<ItemVerifier> verifiers,
-                         List<ItemVerifier> excludes, List<RollEntry> entries, String rarity) {
+                         List<ItemVerifier> excludes, List<RollEntry> entries) {
         public RollConfig withId(ResourceLocation id) {
-            return new RollConfig(id, mode, weight, verifiers, excludes, entries, rarity);
+            return new RollConfig(id, mode, weight, verifiers, excludes, entries);
         }
     }
 

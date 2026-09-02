@@ -129,10 +129,15 @@ public final class RollTables {
 
     private static void warnUnknownSchools(RollConfig config, ResourceLocation file) {
         for (RollEntry entry : config.entries()) {
-            if (entry.school().isPresent() && SchoolResolver.resolve(entry.school().get()) == null) {
-                SpellPoweredWeapons.LOGGER.warn(
-                        "Roll file {} references unknown spell school '{}' — that entry is skipped at "
-                                + "roll time. Its defining mod may not be installed.", file, entry.school().get());
+            if (entry.schools().isEmpty()) {
+                continue;
+            }
+            for (String school : entry.schools().get().declared()) {
+                if (SchoolResolver.resolve(school) == null) {
+                    SpellPoweredWeapons.LOGGER.warn(
+                            "Roll file {} references unknown spell school '{}' — that choice is skipped at "
+                                    + "roll time. Its defining mod may not be installed.", file, school);
+                }
             }
         }
     }
