@@ -1,7 +1,7 @@
 package net.pixeldreamstudios.spw.fx;
 
 import net.pixeldreamstudios.spw.config.SpwConfig;
-import net.spell_engine.api.spell.fx.ParticleBatch;
+import net.spell_engine.api.spell.fx.ParticleGroup;
 import net.spell_power.api.SpellSchool;
 
 import java.util.LinkedHashMap;
@@ -25,6 +25,14 @@ public final class SchoolVisuals {
 
     private static final String FALLBACK = "minecraft:enchanted_hit";
 
+    private static final float MIN_SPEED = 0.1f;
+    private static final float MAX_SPEED = 0.35f;
+    private static final float MIN_COUNT = 2f;
+    private static final float MAX_COUNT = 8f;
+    private static final float COUNT_FACTOR = 8f;
+    private static final float BASE_SCALE = 0.8f;
+    private static final float SCALE_FACTOR = 0.5f;
+
     public static Map<String, String> defaults(Iterable<String> schoolIds) {
         Map<String, String> seed = new LinkedHashMap<>(DEFAULTS);
         for (String id : schoolIds) {
@@ -33,20 +41,21 @@ public final class SchoolVisuals {
         return seed;
     }
 
-    public static ParticleBatch impact(SpellSchool school, float intensity) {
-        ParticleBatch batch = new ParticleBatch(
-                particleId(school),
-                ParticleBatch.Shape.SPHERE,
-                ParticleBatch.Origin.CENTER,
-                countFor(intensity),
-                0.1f,
-                0.35f);
-        batch.scale = 0.8f + intensity * 0.5f;
-        return batch;
+    public static ParticleGroup impact(SpellSchool school, float intensity) {
+        ParticleGroup group = new ParticleGroup();
+        group.id = particleId(school);
+        group.batch(batch -> batch
+                .shape(ParticleGroup.Shape.SPHERE)
+                .anchor(ParticleGroup.Anchor.ENTITY)
+                .count(countFor(intensity))
+                .speed(MIN_SPEED, MAX_SPEED));
+        group.appearance(appearance -> appearance
+                .scale(BASE_SCALE + intensity * SCALE_FACTOR));
+        return group;
     }
 
     private static float countFor(float intensity) {
-        return Math.max(2f, Math.min(8f, 2f + intensity * 8f));
+        return Math.max(MIN_COUNT, Math.min(MAX_COUNT, MIN_COUNT + intensity * COUNT_FACTOR));
     }
 
     private static String particleId(SpellSchool school) {

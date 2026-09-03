@@ -11,7 +11,7 @@ import net.pixeldreamstudios.spw.component.Conversions;
 import net.pixeldreamstudios.spw.component.DamageConversion;
 import net.pixeldreamstudios.spw.fx.SchoolVisuals;
 import net.pixeldreamstudios.spw.mixin.LivingEntityAccessor;
-import net.spell_engine.api.spell.fx.ParticleBatch;
+import net.spell_engine.api.spell.fx.ParticleGroup;
 import net.spell_engine.compat.CriticalStrikeCompat;
 import net.spell_engine.fx.ParticleHelper;
 import net.spell_power.api.SpellDamageSource;
@@ -93,8 +93,8 @@ public final class ElementalDamageDealer {
                     float share = entry.isSplit()
                             ? conversion.effectiveRatio(entry)
                             : Math.min(1f, entry.coefficient());
-                    ParticleHelper.sendBatches(living, new ParticleBatch[]{
-                            SchoolVisuals.impact(school, share)});
+                    ParticleHelper.sendBatches(living,
+                            List.of(SchoolVisuals.impact(school, share)));
                 }
             }
         } finally {

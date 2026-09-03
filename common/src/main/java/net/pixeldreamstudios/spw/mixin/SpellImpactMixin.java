@@ -1,7 +1,6 @@
 package net.pixeldreamstudios.spw.mixin;
 
 import net.minecraft.core.Holder;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +11,8 @@ import net.pixeldreamstudios.spw.config.SpwConfig;
 import net.pixeldreamstudios.spw.damage.ElementalDamageDealer;
 import net.pixeldreamstudios.spw.damage.WeaponBasis;
 import net.spell_engine.api.spell.Spell;
-import net.spell_engine.internals.SpellHelper;
+import net.spell_engine.internals.SpellExecution;
+import net.spell_engine.internals.impact.SpellImpacts;
 import net.spell_power.api.SpellSchool;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -20,20 +20,25 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Collection;
 import java.util.List;
 
-@Mixin(SpellHelper.class)
+@Mixin(SpellImpacts.class)
 public abstract class SpellImpactMixin {
 
-    @Inject(method = "performImpact", at = @At("TAIL"), cancellable = false, remap = false)
-    private static void spw$onPerformImpact(Level level, LivingEntity caster, Entity target,
-                                            Holder<Spell> spell, Spell.Impact impact,
-                                            SpellHelper.ImpactContext context,
-                                            Collection<ServerPlayer> collection,
-                                            CallbackInfoReturnable<Boolean> cir) {
-        if (impact == null || impact.action == null
-                || impact.action.type != Spell.Impact.Action.Type.DAMAGE) {
+    @Inject(
+            method = "performImpacts(Lnet/minecraft/world/level/Level;"
+                    + "Lnet/minecraft/world/entity/LivingEntity;"
+                    + "Lnet/minecraft/world/entity/Entity;"
+                    + "Lnet/minecraft/world/entity/Entity;"
+                    + "Lnet/minecraft/core/Holder;Ljava/util/List;"
+                    + "Lnet/spell_engine/internals/SpellExecution$ImpactContext;)Z",
+            at = @At("TAIL"), remap = false)
+    private static void spw$onPerformImpacts(Level level, LivingEntity caster, Entity target,
+                                             Entity source, Holder<Spell> spell,
+                                             List<Spell.Impact> impacts,
+                                             SpellExecution.ImpactContext context,
+                                             CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValueZ() || impacts == null || !spw$hasDamage(impacts)) {
             return;
         }
         if (level.isClientSide() || ElementalDamageDealer.isDealing()) {
@@ -54,8 +59,19 @@ public abstract class SpellImpactMixin {
                 : List.of(DamageConversion.Mode.ADDITIVE);
 
         float basis = WeaponBasis.originalOf(caster, weapon);
-        float scale = context != null ? Math.max(0f, context.total()) : 1f;
+        float scale = context != null ? Math.max(0f, context.total(spell)) : 1f;
         ElementalDamageDealer.deal(caster, target, weapon, basis, modes, scale);
+    }
+
+    @Unique
+    private static boolean spw$hasDamage(List<Spell.Impact> impacts) {
+        for (Spell.Impact impact : impacts) {
+            if (impact != null && impact.action != null
+                    && impact.action.type == Spell.Impact.Action.Type.DAMAGE) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Unique
