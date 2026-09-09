@@ -1,1 +1,1 @@
-Updated to Spell Engine 1.10.0+
+Fix performImpact mixin

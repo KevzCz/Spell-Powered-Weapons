@@ -26,12 +26,7 @@ import java.util.List;
 public abstract class SpellImpactMixin {
 
     @Inject(
-            method = "performImpacts(Lnet/minecraft/world/level/Level;"
-                    + "Lnet/minecraft/world/entity/LivingEntity;"
-                    + "Lnet/minecraft/world/entity/Entity;"
-                    + "Lnet/minecraft/world/entity/Entity;"
-                    + "Lnet/minecraft/core/Holder;Ljava/util/List;"
-                    + "Lnet/spell_engine/internals/SpellExecution$ImpactContext;)Z",
+            method = "performImpacts",
             at = @At("TAIL"), remap = false)
     private static void spw$onPerformImpacts(Level level, LivingEntity caster, Entity target,
                                              Entity source, Holder<Spell> spell,
