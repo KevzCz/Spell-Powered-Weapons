@@ -8,6 +8,7 @@
     "ArrowAttackMixin",
     "ArrowChargeMixin",
     "LivingEntityAccessor",
+    "LootContextAccessor",
     "LootTableMixin",
     "MobAttackMixin",
     "PlayerAttackMixin",
