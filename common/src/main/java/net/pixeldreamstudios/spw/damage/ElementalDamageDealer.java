@@ -9,6 +9,7 @@ import net.pixeldreamstudios.spw.compat.ModCompat;
 import net.pixeldreamstudios.spw.compat.MoreRpgCompat;
 import net.pixeldreamstudios.spw.component.Conversions;
 import net.pixeldreamstudios.spw.component.DamageConversion;
+import net.pixeldreamstudios.spw.enchantment.ElementalEnchantments;
 import net.pixeldreamstudios.spw.fx.SchoolVisuals;
 import net.pixeldreamstudios.spw.mixin.LivingEntityAccessor;
 import net.spell_engine.api.spell.fx.ParticleGroup;
@@ -50,6 +51,7 @@ public final class ElementalDamageDealer {
         if (conversion == null) {
             return 0f;
         }
+        conversion = ElementalEnchantments.apply(conversion, weapon, attacker.getRandom());
 
         float dealt = 0f;
         DEALING.set(true);

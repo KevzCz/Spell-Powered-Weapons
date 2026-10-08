@@ -11,9 +11,13 @@ import java.util.Map;
 
 public final class SpwConfigScreen extends Screen {
 
+    private static final float CHANCE_STEP = 0.25f;
+    private static final int PERCENT = 100;
+
     private final Screen parent;
 
     private boolean spreadDamageNumbers;
+    private float inherentSchoolChance;
     private boolean showModeTags;
     private boolean showDamageBreakdown;
     private final Map<String, String> particles = new LinkedHashMap<>();
@@ -24,6 +28,7 @@ public final class SpwConfigScreen extends Screen {
         super(Component.translatable("config.spell_powered_weapons.title"));
         this.parent = parent;
         this.spreadDamageNumbers = SpwConfig.spreadDamageNumbersOnMobs();
+        this.inherentSchoolChance = SpwConfig.inherentSchoolChance();
         this.showModeTags = SpwConfig.showModeTags();
         this.showDamageBreakdown = SpwConfig.showDamageBreakdown();
         this.particles.putAll(SpwConfig.schoolParticles());
@@ -34,8 +39,13 @@ public final class SpwConfigScreen extends Screen {
         Button toggle = Button.builder(spreadToggleLabel(), button -> {
             spreadDamageNumbers = !spreadDamageNumbers;
             button.setMessage(spreadToggleLabel());
-        }).bounds(width / 2 - 155, 28, 310, 20).build();
+        }).bounds(width / 2 - 155, 28, 152, 20).build();
         addRenderableWidget(toggle);
+
+        addRenderableWidget(Button.builder(inherentLabel(), button -> {
+            inherentSchoolChance = nextChance(inherentSchoolChance);
+            button.setMessage(inherentLabel());
+        }).bounds(width / 2 + 3, 28, 152, 20).build());
 
         addRenderableWidget(Button.builder(modeTagsLabel(), button -> {
             showModeTags = !showModeTags;
@@ -91,6 +101,17 @@ public final class SpwConfigScreen extends Screen {
                         ? "options.on" : "options.off"));
     }
 
+    private Component inherentLabel() {
+        return Component.translatable("config.spell_powered_weapons.inherent_schools")
+                .append(": ")
+                .append(Math.round(inherentSchoolChance * PERCENT) + "%");
+    }
+
+    private static float nextChance(float current) {
+        float next = Math.round((current + CHANCE_STEP) / CHANCE_STEP) * CHANCE_STEP;
+        return next > 1f ? 0f : next;
+    }
+
     private Component modeTagsLabel() {
         return toggleLabel("config.spell_powered_weapons.mode_tags", showModeTags);
     }
@@ -107,6 +128,7 @@ public final class SpwConfigScreen extends Screen {
 
     private void save() {
         SpwConfig.setSpreadDamageNumbersOnMobs(spreadDamageNumbers);
+        SpwConfig.setInherentSchoolChance(inherentSchoolChance);
         SpwConfig.setShowModeTags(showModeTags);
         SpwConfig.setShowDamageBreakdown(showDamageBreakdown);
         list.applyTo(particles);

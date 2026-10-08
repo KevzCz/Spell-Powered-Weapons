@@ -6,6 +6,8 @@ import java.util.List;
 public final class CommonConfig {
     public boolean spread_damage_numbers_on_mobs = true;
 
+    public float inherent_school_chance = 1.0f;
+
     public List<String> projectile_blacklist = new ArrayList<>();
 
     public List<String> split_and_additive_schools = new ArrayList<>(List.of(

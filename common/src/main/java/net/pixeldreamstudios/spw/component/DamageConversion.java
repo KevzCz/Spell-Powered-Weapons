@@ -82,6 +82,11 @@ public record DamageConversion(List<Entry> entries) {
                     outputType, sourceType, outputName, sourceName, outputIcon);
         }
 
+        public Entry withBonus(float extraBase, float extraCoefficient) {
+            return new Entry(mode, school, ratio, base + extraBase, coefficient + extraCoefficient,
+                    outputType, sourceType, outputName, sourceName, outputIcon);
+        }
+
         public boolean isSplit() {
             return mode == Mode.SPLIT;
         }

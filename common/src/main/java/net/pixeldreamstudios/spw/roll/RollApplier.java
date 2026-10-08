@@ -5,7 +5,10 @@ import net.minecraft.world.item.ItemStack;
 import net.pixeldreamstudios.spw.component.Conversions;
 import net.pixeldreamstudios.spw.component.DamageConversion;
 import net.pixeldreamstudios.spw.component.SpwComponents;
+import net.pixeldreamstudios.spw.config.SpwConfig;
 import net.pixeldreamstudios.spw.damage.PhysicalReduction;
+
+import java.util.List;
 
 public final class RollApplier {
     private RollApplier() {}
@@ -21,7 +24,7 @@ public final class RollApplier {
             return false;
         }
 
-        DamageConversion rolled = ConversionRoller.roll(config, random);
+        DamageConversion rolled = rollFor(stack, config, random);
         if (rolled.isEmpty()) {
             return false;
         }
@@ -39,6 +42,12 @@ public final class RollApplier {
                     SpwComponents.HIDE_DAMAGE_LINE_ID, Boolean.TRUE);
         }
         return true;
+    }
+
+    private static DamageConversion rollFor(ItemStack stack, RollConfig config, RandomSource random) {
+        float chance = SpwConfig.inherentSchoolChance();
+        List<String> inherent = chance > 0f ? InherentSchools.of(stack) : List.of();
+        return ConversionRoller.roll(config, random, inherent, chance);
     }
 
     public static boolean hasRolled(ItemStack stack) {

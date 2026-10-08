@@ -1,0 +1,31 @@
+{
+    "description": {
+        "translate": "enchantment.spell_powered_weapons.conduit"
+    },
+    "supported_items": "#spell_powered_weapons:conversion_targets",
+    "exclusive_set": "#spell_powered_weapons:exclusive_set/elemental",
+    "weight": 2,
+    "max_level": 3,
+    "min_cost": {
+        "base": 10,
+        "per_level_above_first": 20
+    },
+    "max_cost": {
+        "base": 60,
+        "per_level_above_first": 20
+    },
+    "anvil_cost": 4,
+    "slots": [
+        "mainhand"
+    ],
+    "effects": {
+        "spell_powered_weapons:elemental_coefficient": {
+            "type": "minecraft:add",
+            "value": {
+                "type": "minecraft:linear",
+                "base": 0.05,
+                "per_level_above_first": 0.05
+            }
+        }
+    }
+}

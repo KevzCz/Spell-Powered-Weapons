@@ -1,0 +1,7 @@
+{
+    "replace": false,
+    "values": [
+        "spell_powered_weapons:arcane_edge",
+        "spell_powered_weapons:conduit"
+    ]
+}

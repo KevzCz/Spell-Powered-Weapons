@@ -17,11 +17,13 @@ import net.pixeldreamstudios.spw.damage.ElementalDamageDealer;
 import net.pixeldreamstudios.spw.damage.RangedDamage;
 import net.pixeldreamstudios.spw.damage.SchoolResolver;
 import net.pixeldreamstudios.spw.damage.WeaponDamage;
+import net.pixeldreamstudios.spw.enchantment.ElementalEnchantments;
 import net.spell_power.api.SpellSchool;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 public final class DamageConversionTooltip {
     private DamageConversionTooltip() {}
@@ -37,6 +39,10 @@ public final class DamageConversionTooltip {
     private static final String ITEM_DAMAGE_KEY = "tooltip.spell_powered_weapons.item_damage";
     private static final String SPLIT_MODE_KEY = "tooltip.spell_powered_weapons.mode.split";
     private static final String ADDITIVE_MODE_KEY = "tooltip.spell_powered_weapons.mode.additive";
+    private static final String ENCHANT_TERM_KEY = "tooltip.spell_powered_weapons.enchant_term";
+
+    private static final String SUB_LINE_INDENT = "  ";
+    private static final String TERM_SEPARATOR = " + ";
 
     private static final String ATTRIBUTE_NAME_PREFIX = "attribute.name.";
     private static final String MODIFIER_EQUALS_PREFIX = "attribute.modifier.equals.";
@@ -71,8 +77,10 @@ public final class DamageConversionTooltip {
         }
         float weaponDamage = Math.max(0f, rawDamage);
 
+        ElementalEnchantments.Bonus bonus =
+                ElementalEnchantments.perEntry(stack, conversion, player.getRandom());
         DamageCalculator.Breakdown breakdown = DamageCalculator.breakdown(
-                conversion, weaponDamage, schoolId -> {
+                ElementalEnchantments.apply(conversion, bonus), weaponDamage, schoolId -> {
                     SpellSchool school = SchoolResolver.resolve(schoolId);
                     if (!SchoolResolver.isConvertible(school)) {
                         return Float.NaN;
@@ -88,7 +96,7 @@ public final class DamageConversionTooltip {
             SpellSchool school = SchoolResolver.resolve(portion.school());
             elemental.add(schoolLine(portion, school, advanced));
             if (detailed) {
-                elemental.add(breakdownLine(portion, conversion, weaponDamage, player, stack));
+                elemental.add(breakdownLine(portion, conversion, bonus, weaponDamage, player, stack));
             }
         }
         for (DamageConversion.Entry entry : conversion.entries()) {
@@ -172,7 +180,8 @@ public final class DamageConversionTooltip {
     }
 
     private static Component breakdownLine(DamageCalculator.Portion portion,
-                                           DamageConversion conversion, float weaponDamage,
+                                           DamageConversion conversion,
+                                           ElementalEnchantments.Bonus bonus, float weaponDamage,
                                            Player player, ItemStack stack) {
         DamageConversion.Entry entry = entryFor(conversion, portion);
         if (entry == null) {
@@ -180,33 +189,46 @@ public final class DamageConversionTooltip {
         }
 
         SpellSchool school = SchoolResolver.resolve(portion.school());
-        StringBuilder text = new StringBuilder();
+        MutableComponent line = Component.literal(SUB_LINE_INDENT).withStyle(ChatFormatting.DARK_GRAY);
+        boolean[] started = {false};
 
         float ratio = conversion.effectiveRatio(entry);
         if (ratio > 0f) {
-            text.append('(').append(format(weaponDamage))
-                    .append(" × ").append(formatRatio(ratio)).append(')');
+            appendTerm(line, started, Component.literal("(" + format(weaponDamage)
+                    + " × " + formatRatio(ratio) + ")"));
         }
         if (entry.base() > 0f) {
-            appendTerm(text, format(entry.base()));
+            appendTerm(line, started, Component.literal(format(entry.base())));
         }
-        float scaled = entry.coefficient() <= 0f || school == null
-                ? 0f
-                : ElementalDamageDealer.spellPowerOf(school, player, stack) * entry.coefficient();
+        if (bonus.base() > 0f) {
+            appendTerm(line, started, enchantTerm(bonus.base()));
+        }
+        float power = school == null ? 0f : ElementalDamageDealer.spellPowerOf(school, player, stack);
+        float scaled = power * Math.max(0f, entry.coefficient());
         if (scaled > 0f) {
-            appendTerm(text, format(scaled));
+            appendTerm(line, started, Component.literal(format(scaled)));
         }
-        if (text.length() == 0) {
-            text.append(format(portion.amount()));
+        float enchantScaled = power * bonus.coefficient();
+        if (enchantScaled > 0f) {
+            appendTerm(line, started, enchantTerm(enchantScaled));
         }
-        return subLine(text.toString());
+        if (!started[0]) {
+            line.append(format(portion.amount()));
+        }
+        return line;
     }
 
-    private static void appendTerm(StringBuilder text, String term) {
-        if (text.length() > 0) {
-            text.append(" + ");
+    private static void appendTerm(MutableComponent line, boolean[] started, Component term) {
+        if (started[0]) {
+            line.append(TERM_SEPARATOR);
         }
-        text.append(term);
+        line.append(term);
+        started[0] = true;
+    }
+
+    private static Component enchantTerm(float value) {
+        return Component.translatable(ENCHANT_TERM_KEY, format(value))
+                .withStyle(ChatFormatting.LIGHT_PURPLE);
     }
 
     private static DamageConversion.Entry entryFor(DamageConversion conversion,
@@ -220,7 +242,7 @@ public final class DamageConversionTooltip {
     }
 
     private static Component subLine(String text) {
-        return Component.literal("  " + text).withStyle(ChatFormatting.DARK_GRAY);
+        return Component.literal(SUB_LINE_INDENT + text).withStyle(ChatFormatting.DARK_GRAY);
     }
 
     private static String formatRatio(float value) {
@@ -264,7 +286,36 @@ public final class DamageConversionTooltip {
                 return i;
             }
         }
+        for (int i = 0; i < lines.size(); i++) {
+            Component line = lines.get(i);
+            if (containsKey(line, candidate -> isDamageLineKey(candidate, ranged), 0)
+                    && containsKey(line, key::equals, 0)) {
+                return i;
+            }
+        }
         return -1;
+    }
+
+    private static boolean containsKey(Component component, Predicate<String> matches, int depth) {
+        if (component == null || depth > MAX_COMPONENT_DEPTH) {
+            return false;
+        }
+        if (component.getContents() instanceof TranslatableContents contents) {
+            if (matches.test(contents.getKey())) {
+                return true;
+            }
+            for (Object arg : contents.getArgs()) {
+                if (arg instanceof Component nested && containsKey(nested, matches, depth + 1)) {
+                    return true;
+                }
+            }
+        }
+        for (Component sibling : component.getSiblings()) {
+            if (containsKey(sibling, matches, depth + 1)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean mentionsDamageModifier(Component component, String key,
@@ -295,10 +346,10 @@ public final class DamageConversionTooltip {
     }
 
     private static boolean isDamageLineKey(String key, boolean ranged) {
-        if (key.startsWith(MODIFIER_EQUALS_PREFIX)) {
+        if (key.contains(MODIFIER_EQUALS_PREFIX)) {
             return true;
         }
-        return ranged && key.startsWith(MODIFIER_PLUS_PREFIX);
+        return ranged && key.contains(MODIFIER_PLUS_PREFIX);
     }
 
     private static boolean argsMentionDamage(TranslatableContents contents, String key) {

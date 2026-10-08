@@ -26,6 +26,19 @@ public final class ConversionRoller {
     public static DamageConversion roll(RollConfig config, RandomSource random,
                                         Predicate<String> schoolIsValid,
                                         Supplier<List<String>> anySource) {
+        return roll(config, random, schoolIsValid, anySource, List.of(), 0f);
+    }
+
+    public static DamageConversion roll(RollConfig config, RandomSource random,
+                                        List<String> preferred, float preferredChance) {
+        return roll(config, random, school -> SchoolResolver.resolve(school) != null,
+                SchoolResolver::rollableIds, preferred, preferredChance);
+    }
+
+    public static DamageConversion roll(RollConfig config, RandomSource random,
+                                        Predicate<String> schoolIsValid,
+                                        Supplier<List<String>> anySource,
+                                        List<String> preferred, float preferredChance) {
         if (config == null || !config.mode().producesConversion() || config.entries().isEmpty()) {
             return DamageConversion.EMPTY;
         }
@@ -35,7 +48,8 @@ public final class ConversionRoller {
         Set<String> used = new HashSet<>();
 
         for (RollEntry entry : config.entries()) {
-            String school = resolveSchool(entry, random, schoolIsValid, used, anySource);
+            String school = resolveSchool(entry, random, schoolIsValid, used, anySource,
+                    preferred, preferredChance);
             if (entry.schools().isPresent() && school == null) {
                 continue;
             }
@@ -50,11 +64,27 @@ public final class ConversionRoller {
 
     private static String resolveSchool(RollEntry entry, RandomSource random,
                                         Predicate<String> schoolIsValid, Set<String> used,
-                                        Supplier<List<String>> anySource) {
+                                        Supplier<List<String>> anySource,
+                                        List<String> preferred, float preferredChance) {
         if (entry.schools().isEmpty()) {
             return null;
         }
-        return entry.schools().get().pick(random, schoolIsValid, used, anySource);
+        SchoolPool pool = entry.schools().get();
+        if (pool.any() && hasUnused(preferred, schoolIsValid, used)
+                && random.nextFloat() < preferredChance) {
+            return pool.pick(random, schoolIsValid, used, () -> preferred);
+        }
+        return pool.pick(random, schoolIsValid, used, anySource);
+    }
+
+    private static boolean hasUnused(List<String> preferred, Predicate<String> schoolIsValid,
+                                     Set<String> used) {
+        for (String school : preferred) {
+            if (!used.contains(school) && schoolIsValid.test(school)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static DamageConversion.Entry buildEntry(RollMode mode, RollEntry entry, String school,

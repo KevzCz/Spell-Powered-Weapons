@@ -1,0 +1,31 @@
+{
+    "description": {
+        "translate": "enchantment.spell_powered_weapons.arcane_edge"
+    },
+    "supported_items": "#spell_powered_weapons:conversion_targets",
+    "exclusive_set": "#spell_powered_weapons:exclusive_set/elemental",
+    "weight": 5,
+    "max_level": 5,
+    "min_cost": {
+        "base": 1,
+        "per_level_above_first": 11
+    },
+    "max_cost": {
+        "base": 21,
+        "per_level_above_first": 11
+    },
+    "anvil_cost": 2,
+    "slots": [
+        "mainhand"
+    ],
+    "effects": {
+        "spell_powered_weapons:elemental_base": {
+            "type": "minecraft:add",
+            "value": {
+                "type": "minecraft:linear",
+                "base": 1.0,
+                "per_level_above_first": 0.5
+            }
+        }
+    }
+}

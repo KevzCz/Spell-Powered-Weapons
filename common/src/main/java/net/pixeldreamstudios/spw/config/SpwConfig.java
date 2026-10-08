@@ -28,6 +28,14 @@ public final class SpwConfig {
         return common.spread_damage_numbers_on_mobs;
     }
 
+    public static float inherentSchoolChance() {
+        return Math.max(0f, Math.min(1f, common.inherent_school_chance));
+    }
+
+    public static void setInherentSchoolChance(float value) {
+        common.inherent_school_chance = Math.max(0f, Math.min(1f, value));
+    }
+
     public static boolean isBlacklistedProjectile(String entityId) {
         return common.projectile_blacklist.contains(entityId);
     }
