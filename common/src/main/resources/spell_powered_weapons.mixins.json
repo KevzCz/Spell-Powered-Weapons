@@ -5,20 +5,20 @@
   "minVersion": "0.8",
   "client": [],
   "mixins": [
-    "ArrowAttackMixin",
     "ArrowChargeMixin",
     "LivingEntityAccessor",
     "LootContextAccessor",
     "LootTableMixin",
     "MobAttackMixin",
     "PlayerAttackMixin",
+    "ProjectileHurtMixin",
     "ProjectileMixin",
     "ProportionalHurtMixin",
     "QuickCraftMixin",
     "ResultSlotAccessor",
     "ResultSlotMixin",
     "SpellImpactMixin",
-    "ThrownTridentMixin"
+    "UseActionMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.pixeldreamstudios.spw.component.Conversions;
 import net.pixeldreamstudios.spw.component.DamageConversion;
-import net.pixeldreamstudios.spw.config.SpwConfig;
 import net.pixeldreamstudios.spw.damage.ElementalDamageDealer;
+import net.pixeldreamstudios.spw.damage.SchoolRules;
 import net.pixeldreamstudios.spw.damage.WeaponBasis;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.internals.SpellExecution;
@@ -49,9 +49,7 @@ public abstract class SpellImpactMixin {
             return;
         }
 
-        List<DamageConversion.Mode> modes = spw$allowsSplit(spw$spellSchool(spell))
-                ? List.of(DamageConversion.Mode.SPLIT, DamageConversion.Mode.ADDITIVE)
-                : List.of(DamageConversion.Mode.ADDITIVE);
+        List<DamageConversion.Mode> modes = SchoolRules.modesFor(spw$spellSchool(spell));
 
         float basis = WeaponBasis.originalOf(caster, weapon);
         float scale = context != null ? Math.max(0f, context.total(spell)) : 1f;
@@ -75,19 +73,6 @@ public abstract class SpellImpactMixin {
             return null;
         }
         return spell.value().school;
-    }
-
-    @Unique
-    private static boolean spw$allowsSplit(SpellSchool school) {
-        try {
-            if (school == null) {
-                return true;
-            }
-            boolean archetypeDefault = school.archetype != SpellSchool.Archetype.MAGIC;
-            return SpwConfig.schoolAllowsSplit(school.id.toString(), archetypeDefault);
-        } catch (Throwable t) {
-            return true;
-        }
     }
 
     @Unique
