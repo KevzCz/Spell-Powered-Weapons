@@ -8,7 +8,7 @@ import net.pixeldreamstudios.spw.SpellPoweredWeapons;
 import net.spell_engine.api.spell.Spell;
 import net.spell_engine.api.spell.weakness.ScopedWeakness;
 import net.spell_power.api.SpellSchool;
-import net.more_rpg_classes.custom.MoreSpellSchoolWeakness;
+import com.mrpg_lib.compat.spell_engine.MoreSpellSchoolWeakness;
 
 import java.util.List;
 

@@ -1,2 +1,1 @@
-Improve damage hooks so that it can support more modded weapons
-Projectiles now check if it came from the item that has SPW properties
+Support More RPG Library 2.8.0 (mod id and namespace renamed from more_rpg_classes to mrpg_lib)

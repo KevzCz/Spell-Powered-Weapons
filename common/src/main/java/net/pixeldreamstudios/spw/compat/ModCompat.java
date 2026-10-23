@@ -5,7 +5,7 @@ import dev.architectury.platform.Platform;
 public final class ModCompat {
     private ModCompat() {}
 
-    public static final String MORE_RPG_LIBRARY_ID = "more_rpg_classes";
+    public static final String MORE_RPG_LIBRARY_ID = "mrpg_lib";
 
     private static final boolean MORE_RPG_LIBRARY = Platform.isModLoaded(MORE_RPG_LIBRARY_ID);
 

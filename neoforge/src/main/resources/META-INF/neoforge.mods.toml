@@ -54,9 +54,9 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies.spell_powered_weapons]]
-modId = "more_rpg_classes"
+modId = "mrpg_lib"
 type = "optional"
-versionRange = "[2.5,)"
+versionRange = "[2.8,)"
 ordering = "AFTER"
 side = "BOTH"
 

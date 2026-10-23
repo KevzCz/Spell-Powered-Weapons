@@ -37,7 +37,7 @@ dependencies {
     // Spell Engine + Spell Power (Fabric)
     modImplementation "curse.maven:spell-engine-807653:$rootProject.spell_engine_fabric_file"
     modImplementation "curse.maven:spell-power-771265:$rootProject.spell_power_fabric_file"
-    modCompileOnly "curse.maven:more-rpg-library-923030:$rootProject.more_rpg_library_fabric_file"
+    modCompileOnly "maven.modrinth:more-rpg-library:$rootProject.mrpg_lib_fabric_version"
 
     modImplementation "curse.maven:ranged-weapon-api-962162:$rootProject.ranged_weapon_api_fabric_file"
     

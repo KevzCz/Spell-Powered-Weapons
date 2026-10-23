@@ -36,6 +36,6 @@
     "ranged_weapon_api": "*"
   },
   "suggests": {
-    "more_rpg_classes": "*"
+    "mrpg_lib": ">=2.8.0"
   }
 }

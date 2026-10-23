@@ -17,10 +17,10 @@ public final class SchoolVisuals {
         DEFAULTS.put("spell_power:frost", "spell_engine:frost_shard");
         DEFAULTS.put("spell_power:lightning", "spell_engine:electric_arc_a");
         DEFAULTS.put("spell_power:soul", "spell_engine:dripping_blood");
-        DEFAULTS.put("spell_power:earth", "more_rpg_classes:stone_particle");
-        DEFAULTS.put("spell_power:water", "more_rpg_classes:water_drop");
-        DEFAULTS.put("spell_power:air", "more_rpg_classes:small_gust");
-        DEFAULTS.put("spell_power:nature", "more_rpg_classes:leaf");
+        DEFAULTS.put("spell_power:earth", "mrpg_lib:stone_particle");
+        DEFAULTS.put("spell_power:water", "mrpg_lib:water_drop");
+        DEFAULTS.put("spell_power:air", "mrpg_lib:small_gust");
+        DEFAULTS.put("spell_power:nature", "mrpg_lib:leaf");
     }
 
     private static final String FALLBACK = "minecraft:enchanted_hit";
